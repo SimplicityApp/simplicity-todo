@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "simplicity-app",
-    "slug": "simplicity-app",
+    "name": "simplicity-todo",
+    "slug": "simplicity-todo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
