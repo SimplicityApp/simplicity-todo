@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { Task } from '../types';
 import { getRemainingTime } from '../utils/timeUtils';
@@ -21,7 +21,12 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   showCheckbox = true
 }) => {
   const [timeInfo, setTimeInfo] = useState(getRemainingTime(task.deadline));
-  const [fadeAnim] = useState(new Animated.Value(1));
+  const [isCompleting, setIsCompleting] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const checkScaleAnim = useRef(new Animated.Value(0)).current;
+  const checkRotateAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
   const swipeableRef = useRef<Swipeable>(null);
 
   useEffect(() => {
@@ -33,13 +38,58 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   }, [task.deadline]);
 
   const handleComplete = () => {
-    // Animate fade out
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 1500,
-      useNativeDriver: true,
-    }).start(() => {
-      onComplete(task.id);
+    setIsCompleting(true);
+
+    // Quick and snappy completion animation
+    Animated.parallel([
+      // 1. Checkbox fills and checkmark appears quickly
+      Animated.sequence([
+        Animated.spring(checkScaleAnim, {
+          toValue: 1,
+          friction: 7,
+          tension: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(checkRotateAnim, {
+          toValue: 1,
+          duration: 50,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+      // 2. Quick scale bounce for the entire item
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.02,
+          duration: 50,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 50,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start(() => {
+      // Immediately fade out and slide away
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 200,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 20,
+          duration: 200,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        onComplete(task.id);
+      });
     });
   };
 
@@ -66,8 +116,24 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     );
   };
 
+  const checkRotate = checkRotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['-10deg', '0deg'],
+  });
+
   const taskContent = (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          opacity: fadeAnim,
+          transform: [
+            { scale: scaleAnim },
+            { translateY: slideAnim },
+          ],
+        },
+      ]}
+    >
       <TouchableOpacity
         style={styles.content}
         onPress={handlePress}
@@ -75,8 +141,30 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         disabled={!onPress}
       >
         {showCheckbox && (
-          <TouchableOpacity onPress={handleComplete} style={styles.checkbox}>
-            <View style={styles.checkboxCircle} />
+          <TouchableOpacity onPress={handleComplete} style={styles.checkbox} disabled={isCompleting}>
+            <View style={styles.checkboxCircle}>
+              {/* Filled background when completing */}
+              <Animated.View
+                style={[
+                  styles.checkboxFill,
+                  {
+                    transform: [{ scale: checkScaleAnim }],
+                  },
+                ]}
+              />
+              {/* Checkmark */}
+              <Animated.View
+                style={[
+                  styles.checkmarkContainer,
+                  {
+                    opacity: checkScaleAnim,
+                    transform: [{ scale: checkScaleAnim }, { rotate: checkRotate }],
+                  },
+                ]}
+              >
+                <Text style={styles.checkmark}>✓</Text>
+              </Animated.View>
+            </View>
           </TouchableOpacity>
         )}
 
@@ -140,6 +228,27 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderColor: COLORS.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  checkboxFill: {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: COLORS.text,
+  },
+  checkmarkContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmark: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.background,
   },
   textContainer: {
     flex: 1,

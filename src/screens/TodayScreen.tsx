@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 import { useTaskStore } from '../stores/taskStore';
 import { Task } from '../types';
 import { TaskItem } from '../components/TaskItem';
+import { Fireworks } from '../components/Fireworks';
 import { COLORS, TYPOGRAPHY, SPACING, TIMINGS } from '../constants/theme';
 import { getTaskCreationWindow } from '../utils/timeUtils';
 
@@ -22,6 +23,7 @@ interface TodayScreenProps {
 export const TodayScreen: React.FC<TodayScreenProps> = ({ onCreateTask, onEditTask, onDeleteTask }) => {
   const { activeTasks, loadActiveTasks, completeTask, canCreateTask, checkExpiredTasks } =
     useTaskStore();
+  const [showFireworks, setShowFireworks] = useState(false);
 
   useEffect(() => {
     loadActiveTasks();
@@ -37,9 +39,17 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onCreateTask, onEditTa
   const handleCompleteTask = async (taskId: number) => {
     try {
       await completeTask(taskId);
+      // Show fireworks right as task disappears (~350ms for animations)
+      setTimeout(() => {
+        setShowFireworks(true);
+      }, 350);
     } catch (error) {
       console.error('Failed to complete task:', error);
     }
+  };
+
+  const handleFireworksComplete = () => {
+    setShowFireworks(false);
   };
 
   const timeWindow = getTaskCreationWindow();
@@ -95,6 +105,8 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onCreateTask, onEditTa
           </View>
         )}
       </View>
+
+      {showFireworks && <Fireworks onComplete={handleFireworksComplete} />}
     </SafeAreaView>
   );
 };
