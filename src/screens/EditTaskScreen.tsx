@@ -81,46 +81,50 @@ export const EditTaskScreen: React.FC<EditTaskScreenProps> = ({ task, onClose, o
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
+        keyboardVerticalOffset={0}
       >
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Edit Task</Text>
-            <TouchableOpacity onPress={handleDeleteRequest} style={styles.deleteButton}>
-              <Text style={styles.deleteIcon}>🗑️</Text>
-            </TouchableOpacity>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Edit Task</Text>
+          <TouchableOpacity onPress={handleDeleteRequest} style={styles.deleteButton}>
+            <Text style={styles.deleteIcon}>🗑️</Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={titleInputRef}
+              style={styles.titleInput}
+              placeholder="What needs to be done?"
+              placeholderTextColor={COLORS.textSecondary}
+              value={title}
+              onChangeText={setTitle}
+              multiline
+              maxLength={200}
+              returnKeyType="next"
+              blurOnSubmit={false}
+            />
+
+            <TextInput
+              style={styles.descriptionInput}
+              placeholder="Add details (optional)"
+              placeholderTextColor={COLORS.textSecondary}
+              value={description}
+              onChangeText={setDescription}
+              multiline
+              maxLength={500}
+            />
           </View>
 
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-            <View style={styles.inputContainer}>
-              <TextInput
-                ref={titleInputRef}
-                style={styles.titleInput}
-                placeholder="What needs to be done?"
-                placeholderTextColor={COLORS.textSecondary}
-                value={title}
-                onChangeText={setTitle}
-                multiline
-                maxLength={200}
-                returnKeyType="next"
-                blurOnSubmit={false}
-              />
-
-              <TextInput
-                style={styles.descriptionInput}
-                placeholder="Add details (optional)"
-                placeholderTextColor={COLORS.textSecondary}
-                value={description}
-                onChangeText={setDescription}
-                multiline
-                maxLength={500}
-              />
-            </View>
-
-            <DeadlinePicker
-              onDeadlineChange={setCustomDeadline}
-              initialDeadline={customDeadline}
-            />
-          </ScrollView>
+          <DeadlinePicker
+            onDeadlineChange={setCustomDeadline}
+            initialDeadline={customDeadline}
+          />
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -145,7 +149,7 @@ export const EditTaskScreen: React.FC<EditTaskScreenProps> = ({ task, onClose, o
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
 
       <ConfirmDialog
@@ -170,16 +174,12 @@ const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.xl,
-    justifyContent: 'space-between',
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.xl,
     paddingBottom: SPACING.md,
   },
   headerTitle: {
@@ -196,6 +196,10 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  scrollContent: {
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.lg,
+  },
   inputContainer: {
     paddingTop: SPACING.md,
   },
@@ -209,13 +213,13 @@ const styles = StyleSheet.create({
   descriptionInput: {
     ...TYPOGRAPHY.description,
     color: COLORS.textSecondary,
-    minHeight: 100,
+    minHeight: 60,
     textAlignVertical: 'top',
   },
   buttonContainer: {
     flexDirection: 'row',
     gap: SPACING.md,
-    paddingBottom: SPACING.lg,
+    marginTop: SPACING.xl,
   },
   button: {
     flex: 1,

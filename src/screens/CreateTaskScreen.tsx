@@ -61,38 +61,42 @@ export const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ onClose }) =
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
+        keyboardVerticalOffset={0}
       >
-        <View style={styles.content}>
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-            <View style={styles.inputContainer}>
-              <TextInput
-                ref={titleInputRef}
-                style={styles.titleInput}
-                placeholder="What needs to be done?"
-                placeholderTextColor={COLORS.textSecondary}
-                value={title}
-                onChangeText={setTitle}
-                multiline
-                maxLength={200}
-                returnKeyType="next"
-                blurOnSubmit={false}
-              />
-
-              <TextInput
-                style={styles.descriptionInput}
-                placeholder="Add details (optional)"
-                placeholderTextColor={COLORS.textSecondary}
-                value={description}
-                onChangeText={setDescription}
-                multiline
-                maxLength={500}
-              />
-            </View>
-
-            <DeadlinePicker
-              onDeadlineChange={setCustomDeadline}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={titleInputRef}
+              style={styles.titleInput}
+              placeholder="What needs to be done?"
+              placeholderTextColor={COLORS.textSecondary}
+              value={title}
+              onChangeText={setTitle}
+              multiline
+              maxLength={200}
+              returnKeyType="next"
+              blurOnSubmit={false}
             />
-          </ScrollView>
+
+            <TextInput
+              style={styles.descriptionInput}
+              placeholder="Add details (optional)"
+              placeholderTextColor={COLORS.textSecondary}
+              value={description}
+              onChangeText={setDescription}
+              multiline
+              maxLength={500}
+            />
+          </View>
+
+          <DeadlinePicker
+            onDeadlineChange={setCustomDeadline}
+          />
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -117,7 +121,7 @@ export const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ onClose }) =
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -131,14 +135,13 @@ const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.xl,
-    justifyContent: 'space-between',
-  },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
   },
   inputContainer: {
     paddingTop: SPACING.xl,
@@ -153,13 +156,13 @@ const styles = StyleSheet.create({
   descriptionInput: {
     ...TYPOGRAPHY.description,
     color: COLORS.textSecondary,
-    minHeight: 100,
+    minHeight: 60,
     textAlignVertical: 'top',
   },
   buttonContainer: {
     flexDirection: 'row',
     gap: SPACING.md,
-    paddingBottom: SPACING.lg,
+    marginTop: SPACING.xl
   },
   button: {
     flex: 1,

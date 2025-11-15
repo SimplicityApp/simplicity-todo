@@ -99,9 +99,6 @@ export const DeadlinePicker: React.FC<DeadlinePickerProps> = ({
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Set Deadline</Text>
-      <Text style={styles.sublabel}>
-        Maximum: {maxHours} hours from now
-      </Text>
 
       <View style={styles.pickerRow}>
         <View style={styles.pickerContainer}>
@@ -159,7 +156,6 @@ export const DeadlinePicker: React.FC<DeadlinePickerProps> = ({
         <Text style={styles.error}>{error}</Text>
       ) : (
         <View style={styles.displayContainer}>
-          <Text style={styles.displayLabel}>Deadline:</Text>
           <Text style={styles.displayValue}>
             {formatDeadlineDisplay(getCurrentDeadline())}
           </Text>
@@ -171,32 +167,26 @@ export const DeadlinePicker: React.FC<DeadlinePickerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.sm,
   },
   label: {
-    fontSize: TYPOGRAPHY.task.fontSize,
-    fontWeight: TYPOGRAPHY.task.fontWeight,
+    fontSize: 16,
+    fontWeight: '500',
     color: COLORS.text,
-    marginBottom: SPACING.xs,
-  },
-  sublabel: {
-    fontSize: TYPOGRAPHY.description.fontSize,
-    fontWeight: TYPOGRAPHY.description.fontWeight,
-    color: COLORS.textSecondary,
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.sm,
   },
   pickerRow: {
     flexDirection: 'row',
-    gap: SPACING.md,
-    marginBottom: SPACING.md,
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
   },
   pickerContainer: {
     flex: 1,
   },
   pickerLabel: {
-    fontSize: TYPOGRAPHY.description.fontSize,
-    fontWeight: TYPOGRAPHY.description.fontWeight,
-    color: COLORS.text,
+    fontSize: 13,
+    fontWeight: '400',
+    color: COLORS.textSecondary,
     marginBottom: SPACING.xs,
     textAlign: 'center',
   },
@@ -206,47 +196,42 @@ const styles = StyleSheet.create({
     gap: SPACING.xs,
   },
   button: {
-    width: 40,
-    height: 40,
+    width: 32,
+    height: 32,
     backgroundColor: COLORS.white,
     borderWidth: 1,
     borderColor: COLORS.divider,
-    borderRadius: 8,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     color: COLORS.accent,
   },
   input: {
     flex: 1,
-    height: 40,
+    height: 32,
     backgroundColor: COLORS.white,
     borderWidth: 1,
     borderColor: COLORS.divider,
-    borderRadius: 8,
+    borderRadius: 6,
     textAlign: 'center',
-    fontSize: TYPOGRAPHY.task.fontSize,
-    fontWeight: TYPOGRAPHY.task.fontWeight,
+    fontSize: 16,
+    fontWeight: '500',
     color: COLORS.text,
   },
   displayContainer: {
     backgroundColor: COLORS.white,
-    padding: SPACING.md,
-    borderRadius: 8,
+    padding: SPACING.sm,
+    borderRadius: 6,
     borderWidth: 1,
     borderColor: COLORS.divider,
-  },
-  displayLabel: {
-    fontSize: TYPOGRAPHY.description.fontSize,
-    fontWeight: TYPOGRAPHY.description.fontWeight,
-    color: COLORS.textSecondary,
-    marginBottom: SPACING.xs,
+    alignItems: 'center',
   },
   displayValue: {
-    fontSize: TYPOGRAPHY.task.fontSize,
+    fontSize: 15,
     fontWeight: '500',
     color: COLORS.accent,
   },
