@@ -3,7 +3,7 @@ import { dbOperations } from '../database/db';
 import { calculateDeadline, hasExpired } from '../utils/timeUtils';
 import type { Task, TaskInsert, TaskStats } from '../types';
 import { TIMINGS } from '../constants/theme';
-import { scheduleTaskDeadlineNotification, scheduleTaskReminderNotification } from '../services/notificationService';
+import { scheduleTaskDeadlineNotification, scheduleTaskReminderNotification, cancelTaskNotifications } from '../services/notificationService';
 
 interface TaskStore {
   // State
@@ -66,9 +66,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const deadline = customDeadline ? customDeadline.toISOString() : calculateDeadline();
       const newTask = dbOperations.createTask(task, deadline);
 
-      // Schedule notifications
-      await scheduleTaskDeadlineNotification(newTask.id, newTask.title, newTask.deadline);
-      await scheduleTaskReminderNotification(newTask.id, newTask.title, newTask.deadline, 60);
+      // Schedule notifications and store their IDs
+      const deadlineNotificationId = await scheduleTaskDeadlineNotification(newTask.id, newTask.title, newTask.deadline);
+      const reminderNotificationId = await scheduleTaskReminderNotification(newTask.id, newTask.title, newTask.deadline, 60);
+
+      // Store notification IDs in database
+      dbOperations.updateNotificationIds(newTask.id, reminderNotificationId, deadlineNotificationId);
 
       loadActiveTasks();
     } catch (error) {
@@ -92,6 +95,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   // Delete a task permanently
   deleteTask: async (taskId: number) => {
     try {
+      // Get task to retrieve notification IDs
+      const task = dbOperations.getTaskById(taskId);
+      if (task) {
+        // Cancel scheduled notifications before deleting
+        await cancelTaskNotifications(task.reminder_notification_id, task.deadline_notification_id);
+      }
+
       dbOperations.deleteTask(taskId);
       get().loadActiveTasks();
       get().loadArchivedTasks();
@@ -104,6 +114,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   // Mark task as completed
   completeTask: async (taskId: number) => {
     try {
+      // Get task to retrieve notification IDs
+      const task = dbOperations.getTaskById(taskId);
+      if (task) {
+        // Cancel scheduled notifications
+        await cancelTaskNotifications(task.reminder_notification_id, task.deadline_notification_id);
+      }
+
       dbOperations.completeTask(taskId);
       get().loadActiveTasks();
       get().loadArchivedTasks();
@@ -122,7 +139,15 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
 
     try {
-      dbOperations.reEnableTask(taskId);
+      const newTask = dbOperations.reEnableTask(taskId);
+
+      // Schedule notifications for the re-enabled task
+      const deadlineNotificationId = await scheduleTaskDeadlineNotification(newTask.id, newTask.title, newTask.deadline);
+      const reminderNotificationId = await scheduleTaskReminderNotification(newTask.id, newTask.title, newTask.deadline, 60);
+
+      // Store notification IDs in database
+      dbOperations.updateNotificationIds(newTask.id, reminderNotificationId, deadlineNotificationId);
+
       loadActiveTasks();
       loadArchivedTasks();
     } catch (error) {
@@ -132,14 +157,16 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   // Check for expired tasks and move them to archive
-  checkExpiredTasks: () => {
+  checkExpiredTasks: async () => {
     const { activeTasks, loadActiveTasks, loadArchivedTasks } = get();
 
-    activeTasks.forEach((task) => {
+    for (const task of activeTasks) {
       if (hasExpired(task.deadline)) {
+        // Cancel scheduled notifications before expiring the task
+        await cancelTaskNotifications(task.reminder_notification_id, task.deadline_notification_id);
         dbOperations.expireTask(task.id);
       }
-    });
+    }
 
     loadActiveTasks();
     loadArchivedTasks();

@@ -3,10 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTaskStore } from '../stores/taskStore';
 import { getDateRange } from '../utils/timeUtils';
 import { COLORS, TYPOGRAPHY, SPACING } from '../constants/theme';

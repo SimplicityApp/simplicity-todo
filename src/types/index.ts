@@ -11,6 +11,8 @@ export interface Task {
   completed_at?: string; // ISO timestamp
   reactivation_count: number;
   original_task_id?: number;
+  reminder_notification_id?: string;
+  deadline_notification_id?: string;
 }
 
 export interface TaskInsert {

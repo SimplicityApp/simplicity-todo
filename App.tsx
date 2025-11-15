@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, Modal, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { initDatabase } from './src/database/db';
 import { Task } from './src/types';
 import { TodayScreen } from './src/screens/TodayScreen';
@@ -89,48 +90,50 @@ export default function App() {
   };
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
 
-      {renderScreen()}
+        {renderScreen()}
 
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <Modal
-        visible={showCreateTask}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setShowCreateTask(false)}
-      >
-        <CreateTaskScreen onClose={() => setShowCreateTask(false)} />
-      </Modal>
-
-      {editingTask && (
         <Modal
-          visible={true}
+          visible={showCreateTask}
           animationType="slide"
           presentationStyle="pageSheet"
-          onRequestClose={() => setEditingTask(null)}
+          onRequestClose={() => setShowCreateTask(false)}
         >
-          <EditTaskScreen
-            task={editingTask}
-            onClose={() => setEditingTask(null)}
-            onDelete={handleDeleteFromEdit}
-          />
+          <CreateTaskScreen onClose={() => setShowCreateTask(false)} />
         </Modal>
-      )}
 
-      <ConfirmDialog
-        visible={deletingTaskId !== null}
-        title="Delete Task"
-        message="Are you sure you want to delete this task? This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
-        destructive
-        onConfirm={handleConfirmDelete}
-        onCancel={() => setDeletingTaskId(null)}
-      />
-    </GestureHandlerRootView>
+        {editingTask && (
+          <Modal
+            visible={true}
+            animationType="slide"
+            presentationStyle="pageSheet"
+            onRequestClose={() => setEditingTask(null)}
+          >
+            <EditTaskScreen
+              task={editingTask}
+              onClose={() => setEditingTask(null)}
+              onDelete={handleDeleteFromEdit}
+            />
+          </Modal>
+        )}
+
+        <ConfirmDialog
+          visible={deletingTaskId !== null}
+          title="Delete Task"
+          message="Are you sure you want to delete this task? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          destructive
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setDeletingTaskId(null)}
+        />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 

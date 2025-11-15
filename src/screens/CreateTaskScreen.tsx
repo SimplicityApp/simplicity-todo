@@ -5,11 +5,11 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTaskStore } from '../stores/taskStore';
 import { COLORS, TYPOGRAPHY, SPACING } from '../constants/theme';
 import { DeadlinePicker } from '../components/DeadlinePicker';

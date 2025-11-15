@@ -119,6 +119,22 @@ export const cancelNotification = async (notificationId: string): Promise<void> 
 };
 
 /**
+ * Cancel all notifications for a specific task
+ */
+export const cancelTaskNotifications = async (reminderNotificationId?: string, deadlineNotificationId?: string): Promise<void> => {
+  try {
+    if (reminderNotificationId) {
+      await Notifications.cancelScheduledNotificationAsync(reminderNotificationId);
+    }
+    if (deadlineNotificationId) {
+      await Notifications.cancelScheduledNotificationAsync(deadlineNotificationId);
+    }
+  } catch (error) {
+    console.error('Failed to cancel task notifications:', error);
+  }
+};
+
+/**
  * Cancel all scheduled notifications
  */
 export const cancelAllNotifications = async (): Promise<void> => {

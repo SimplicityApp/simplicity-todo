@@ -1,0 +1,421 @@
+/* Why Page Specific Styles */
+
+nav a.active {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* Why Hero */
+.why-hero {
+    background: linear-gradient(135deg, #fff5f2 0%, #ffffff 100%);
+    padding: 100px 0 80px;
+    text-align: center;
+}
+
+.why-hero h1 {
+    font-size: 3rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.why-hero .subtitle {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Problem Section */
+.problem-section {
+    padding: 80px 0;
+    background: var(--white);
+}
+
+.problem-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.problem-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.problem-card {
+    background: var(--bg-light);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+}
+
+.problem-emoji {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.problem-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.problem-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.problem-card blockquote {
+    background: var(--white);
+    padding: 1rem;
+    border-left: 3px solid var(--primary-color);
+    font-style: italic;
+    color: var(--text-light);
+    margin-top: 1.5rem;
+}
+
+/* Insight Section */
+.insight-section {
+    padding: 80px 0;
+    background: var(--text-dark);
+    color: var(--white);
+}
+
+.insight-content h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--white);
+}
+
+.insight-text {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.large-text {
+    font-size: 1.8rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.large-text strong {
+    color: var(--secondary-color);
+}
+
+.insight-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    color: #ccc;
+}
+
+/* Solution Section */
+.solution-section {
+    padding: 80px 0;
+    background: var(--white);
+}
+
+.solution-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.solution-grid {
+    display: grid;
+    gap: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.solution-item {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.solution-number {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-color);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.solution-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.solution-content p {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.solution-benefit {
+    color: var(--primary-color);
+    margin: 0.5rem 0;
+    font-weight: 500;
+}
+
+/* Audience Section */
+.audience-section {
+    padding: 80px 0;
+    background: var(--bg-light);
+}
+
+.audience-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.25rem;
+    color: var(--text-light);
+    margin-bottom: 3rem;
+}
+
+.audience-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.audience-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.audience-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.audience-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.audience-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* Not For Section */
+.not-for-section {
+    padding: 80px 0;
+    background: var(--white);
+}
+
+.not-for-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.not-for-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.not-for-item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--divider);
+}
+
+.not-for-item:last-child {
+    border-bottom: none;
+}
+
+.not-icon {
+    font-size: 2rem;
+    color: #999;
+    flex-shrink: 0;
+}
+
+.not-for-item h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.not-for-item p {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.not-for-footer {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+    color: var(--text-light);
+}
+
+.not-for-footer em {
+    color: var(--primary-color);
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* Philosophy Section */
+.philosophy-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #fff5f2 0%, #ffffff 100%);
+}
+
+.philosophy-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.philosophy-quotes {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.philosophy-quote {
+    background: var(--white);
+    padding: 2rem;
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 3rem;
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+}
+
+.philosophy-quote p {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.philosophy-quote cite {
+    display: block;
+    text-align: right;
+    color: var(--text-light);
+    font-size: 1rem;
+    font-style: normal;
+}
+
+.philosophy-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.philosophy-text strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.philosophy-text em {
+    color: var(--primary-color);
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* CTA Section */
+.cta-section {
+    padding: 80px 0;
+    background: var(--text-dark);
+    color: var(--white);
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--white);
+}
+
+.cta-section p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: #ccc;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .why-hero h1 {
+        font-size: 2rem;
+    }
+
+    .why-hero .subtitle {
+        font-size: 1.1rem;
+    }
+
+    .problem-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+    }
+
+    .solution-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .solution-number {
+        margin: 0 auto;
+    }
+
+    .audience-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+    }
+
+    .large-text {
+        font-size: 1.4rem;
+    }
+
+    .philosophy-quote p {
+        font-size: 1.2rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cta-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}

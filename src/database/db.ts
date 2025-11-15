@@ -27,6 +27,8 @@ export const initDatabase = () => {
       completed_at TEXT,
       reactivation_count INTEGER DEFAULT 0,
       original_task_id INTEGER,
+      reminder_notification_id TEXT,
+      deadline_notification_id TEXT,
       FOREIGN KEY (original_task_id) REFERENCES tasks (id)
     );
   `);
@@ -43,6 +45,21 @@ export const initDatabase = () => {
   database.execSync(`
     CREATE INDEX IF NOT EXISTS idx_deadline ON tasks(deadline);
   `);
+
+  // Migration: Add notification ID columns if they don't exist
+  try {
+    // Check if columns exist by trying to select them
+    database.getFirstSync('SELECT reminder_notification_id, deadline_notification_id FROM tasks LIMIT 1');
+  } catch (error) {
+    // Columns don't exist, add them
+    console.log('Migrating database: adding notification ID columns');
+    database.execSync(`
+      ALTER TABLE tasks ADD COLUMN reminder_notification_id TEXT;
+    `);
+    database.execSync(`
+      ALTER TABLE tasks ADD COLUMN deadline_notification_id TEXT;
+    `);
+  }
 };
 
 // Database operations
@@ -105,6 +122,22 @@ export const dbOperations = {
       'UPDATE tasks SET title = ?, description = ?, deadline = ? WHERE id = ?',
       [title, description, deadline, taskId]
     );
+  },
+
+  // Update notification IDs for a task
+  updateNotificationIds: (taskId: number, reminderNotificationId: string | null, deadlineNotificationId: string | null): void => {
+    const database = getDatabase();
+    database.runSync(
+      'UPDATE tasks SET reminder_notification_id = ?, deadline_notification_id = ? WHERE id = ?',
+      [reminderNotificationId, deadlineNotificationId, taskId]
+    );
+  },
+
+  // Get task by ID
+  getTaskById: (taskId: number): Task | null => {
+    const database = getDatabase();
+    const task = database.getFirstSync('SELECT * FROM tasks WHERE id = ?', [taskId]);
+    return task as Task | null;
   },
 
   // Delete task permanently
