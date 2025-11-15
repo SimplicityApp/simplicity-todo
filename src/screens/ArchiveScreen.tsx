@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTaskStore } from '../stores/taskStore';
 import { Task } from '../types';
 import { formatRelativeTime } from '../utils/timeUtils';
@@ -20,6 +21,20 @@ export const ArchiveScreen: React.FC = () => {
   useEffect(() => {
     loadArchivedTasks();
   }, []);
+
+  // Swipe gesture handler
+  const panGesture = Gesture.Pan()
+    .onEnd((event) => {
+      const SWIPE_THRESHOLD = 50;
+
+      if (event.translationX > SWIPE_THRESHOLD) {
+        // Swipe right: go to finished (left tab)
+        setSelectedTab('finished');
+      } else if (event.translationX < -SWIPE_THRESHOLD) {
+        // Swipe left: go to unfinished (right tab)
+        setSelectedTab('unfinished');
+      }
+    });
 
   const handleReEnable = (task: Task) => {
     if (!canCreateTask()) {
@@ -127,25 +142,29 @@ export const ArchiveScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {currentTasks.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>
-              No {selectedTab} tasks yet
-            </Text>
-          </View>
-        ) : (
-          <FlatList
-            data={currentTasks}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderTaskItem}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            contentContainerStyle={styles.listContent}
-          />
-        )}
+        <GestureDetector gesture={panGesture}>
+          <View style={styles.gestureContainer}>
+            {currentTasks.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>
+                  No {selectedTab} tasks yet
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={currentTasks}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderTaskItem}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                contentContainerStyle={styles.listContent}
+              />
+            )}
 
-        {selectedTab === 'unfinished' && currentTasks.length > 0 && (
-          <Text style={styles.hint}>Tap a task to re-enable it</Text>
-        )}
+            {selectedTab === 'unfinished' && currentTasks.length > 0 && (
+              <Text style={styles.hint}>Tap a task to re-enable it</Text>
+            )}
+          </View>
+        </GestureDetector>
       </View>
     </SafeAreaView>
   );
@@ -187,6 +206,9 @@ const styles = StyleSheet.create({
   },
   tabTextActive: {
     color: COLORS.text,
+  },
+  gestureContainer: {
+    flex: 1,
   },
   listContent: {
     paddingBottom: SPACING.lg,
