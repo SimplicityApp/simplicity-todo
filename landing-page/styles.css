@@ -50,6 +50,16 @@ header .container {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.logo-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
 }
 
 nav {
@@ -308,6 +318,19 @@ nav a:hover {
 .download {
     padding: 80px 0;
     background: linear-gradient(135deg, #fff5f2 0%, #ffffff 100%);
+}
+
+.app-icon-showcase {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.app-icon-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(216, 67, 21, 0.3);
 }
 
 .download h2 {
