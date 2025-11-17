@@ -114,12 +114,24 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   // Mark task as completed
   completeTask: async (taskId: number) => {
     try {
-      // Get task to retrieve notification IDs
+      // Get task to retrieve notification IDs and check status
       const task = dbOperations.getTaskById(taskId);
-      if (task) {
-        // Cancel scheduled notifications
-        await cancelTaskNotifications(task.reminder_notification_id, task.deadline_notification_id);
+      if (!task) {
+        throw new Error('Task not found');
       }
+
+      // Check if task has already expired
+      if (task.status === 'expired_unfinished') {
+        throw new Error('Cannot complete an expired task');
+      }
+
+      // Check if task has expired based on deadline (race condition protection)
+      if (hasExpired(task.deadline)) {
+        throw new Error('Cannot complete an expired task');
+      }
+
+      // Cancel scheduled notifications
+      await cancelTaskNotifications(task.reminder_notification_id, task.deadline_notification_id);
 
       dbOperations.completeTask(taskId);
       get().loadActiveTasks();

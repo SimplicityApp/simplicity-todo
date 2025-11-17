@@ -27,6 +27,14 @@ export const checkAndExpireTasks = async (): Promise<number> => {
  * Returns cleanup function to stop checking
  */
 export const setupAutoExpiration = (intervalMs: number = 60000): (() => void) => {
+  // Run immediate check on setup (handles app reopening after task expired)
+  checkAndExpireTasks().then((expired) => {
+    if (expired > 0) {
+      console.log(`Initial check: expired ${expired} task(s)`);
+    }
+  });
+
+  // Then setup interval for periodic checks
   const interval = setInterval(async () => {
     const expired = await checkAndExpireTasks();
     if (expired > 0) {

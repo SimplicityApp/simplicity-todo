@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTaskStore } from '../stores/taskStore';
@@ -26,7 +27,9 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onCreateTask, onEditTa
   const [showFireworks, setShowFireworks] = useState(false);
 
   useEffect(() => {
-    loadActiveTasks();
+    // Check for expired tasks immediately on mount (handles app reopening after task expired)
+    // This also loads active tasks, so no need to call loadActiveTasks separately
+    checkExpiredTasks();
 
     // Check for expired tasks every minute
     const interval = setInterval(() => {
@@ -45,6 +48,21 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onCreateTask, onEditTa
       }, 350);
     } catch (error) {
       console.error('Failed to complete task:', error);
+
+      // If task has expired, show alert and refresh the list
+      if (error instanceof Error && error.message.includes('expired')) {
+        Alert.alert(
+          'Task Expired',
+          'This task has already expired and moved to unfinished tasks.',
+          [{ text: 'OK', onPress: () => loadActiveTasks() }]
+        );
+      } else {
+        Alert.alert(
+          'Error',
+          'Failed to complete task. Please try again.',
+          [{ text: 'OK' }]
+        );
+      }
     }
   };
 
