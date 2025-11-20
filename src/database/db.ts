@@ -6,7 +6,7 @@ let db: SQLite.SQLiteDatabase | null = null;
 
 const getDatabase = (): SQLite.SQLiteDatabase => {
   if (!db) {
-    db = SQLite.openDatabaseSync('simplicity.db');
+    db = SQLite.openDatabaseSync('simple.db');
   }
   return db;
 };

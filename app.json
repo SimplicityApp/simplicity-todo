@@ -1,12 +1,14 @@
 {
   "expo": {
-    "name": "simplicity-todo",
-    "slug": "simplicity-todo",
+    "name": "Simple Todo",
+    "slug": "simple-todo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "description": "A simple and elegant todo app with time-based task management",
+    "primaryColor": "#000000",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,7 +16,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.simplicity.todo"
+      "bundleIdentifier": "com.simple-tech.simple-todo",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSUserNotificationsUsageDescription": "This app uses notifications to remind you about upcoming and expiring tasks."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +29,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.simplicity.todo"
+      "package": "com.simpletech.simpletodo"
     },
     "web": {
       "favicon": "./assets/favicon.png"

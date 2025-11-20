@@ -47,6 +47,13 @@ export default function App() {
     setEditingTask(task);
   };
 
+  const handleCloseEdit = () => {
+    setEditingTask(null);
+    // Force reload of active tasks to refresh the UI immediately after editing
+    const { loadActiveTasks } = useTaskStore.getState();
+    loadActiveTasks();
+  };
+
   const handleDeleteRequest = (taskId: number) => {
     setDeletingTaskId(taskId);
   };
@@ -112,11 +119,11 @@ export default function App() {
             visible={true}
             animationType="slide"
             presentationStyle="pageSheet"
-            onRequestClose={() => setEditingTask(null)}
+            onRequestClose={handleCloseEdit}
           >
             <EditTaskScreen
               task={editingTask}
-              onClose={() => setEditingTask(null)}
+              onClose={handleCloseEdit}
               onDelete={handleDeleteFromEdit}
             />
           </Modal>

@@ -83,7 +83,34 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   // Update an existing task
   updateTask: async (taskId: number, updates: { title?: string; description?: string; deadline?: string }) => {
     try {
+      // Get the current task to check if deadline is changing
+      const currentTask = dbOperations.getTaskById(taskId);
+      if (!currentTask) {
+        throw new Error('Task not found');
+      }
+
+      const deadlineChanged = updates.deadline && updates.deadline !== currentTask.deadline;
+
+      // If deadline is changing, cancel old notifications and schedule new ones
+      if (deadlineChanged) {
+        // Cancel old notifications
+        await cancelTaskNotifications(currentTask.reminder_notification_id, currentTask.deadline_notification_id);
+      }
+
+      // Update the task in database
       dbOperations.updateTask(taskId, updates);
+
+      // If deadline changed, schedule new notifications
+      if (deadlineChanged && updates.deadline) {
+        const taskTitle = updates.title || currentTask.title;
+        const deadlineNotificationId = await scheduleTaskDeadlineNotification(taskId, taskTitle, updates.deadline);
+        const reminderNotificationId = await scheduleTaskReminderNotification(taskId, taskTitle, updates.deadline, 60);
+
+        // Store new notification IDs
+        dbOperations.updateNotificationIds(taskId, reminderNotificationId, deadlineNotificationId);
+      }
+
+      // Reload tasks to update the UI
       get().loadActiveTasks();
       get().loadArchivedTasks();
     } catch (error) {
