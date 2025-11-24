@@ -4,7 +4,7 @@
     "slug": "simple-todo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/simple-todo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "description": "A simple and elegant todo app with time-based task management",
@@ -19,12 +19,13 @@
       "bundleIdentifier": "com.simple-tech.simple-todo",
       "buildNumber": "1",
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "This app uses notifications to remind you about upcoming and expiring tasks."
+        "NSUserNotificationsUsageDescription": "This app uses notifications to remind you about upcoming and expiring tasks.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/simple-todo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -39,7 +40,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "608fcdaa-1bc2-4d2b-b896-87fdfc2484e3"
+        "projectId": "874b7b9c-31bb-4c47-b07a-ebab15bc6cb1"
       }
     }
   }

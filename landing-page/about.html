@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Simplicity</title>
+    <meta name="description" content="Learn about Simplicity - a minimalist todo app built to help you focus on what truly matters.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/simple-tech-orange.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/simple-tech-orange.png">
+
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, #fff5f2 0%, #ffffff 100%);
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+
+        .about-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .about-hero p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .about-content {
+            padding: 60px 0;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-section {
+            background: var(--white);
+            padding: 3rem;
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .about-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .about-section h3 {
+            color: var(--text-dark);
+            margin: 2rem 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        .about-section p {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .about-section ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-section li {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+        }
+
+        .highlight-box {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+            margin: 2rem 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            font-style: italic;
+            color: var(--text-dark);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-light);
+            border-radius: var(--border-radius);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .team-section {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: 3rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .cta-section h2 {
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        .cta-section .btn {
+            background: var(--white);
+            color: var(--primary-color);
+        }
+
+        .cta-section .btn:hover {
+            background: var(--bg-light);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="simple-tech-orange.png" alt="Simplicity Logo" class="logo-icon">
+                <span>Simplicity</span>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="why.html">Why?</a>
+                <a href="support.html">Support</a>
+                <a href="about.html">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <h1>About Simplicity</h1>
+            <p>We're on a mission to help people focus on what truly matters by cutting through the noise of modern productivity tools</p>
+        </div>
+    </section>
+
+    <!-- About Content -->
+    <section class="about-content">
+        <div class="container">
+
+            <!-- Our Story -->
+            <div class="about-section">
+                <h2>Our Story</h2>
+                <p>Simplicity was born from a simple observation: traditional todo apps make us less productive, not more. We kept adding tasks, creating lists, organizing categories, and color-coding priorities—but we weren't actually getting things done.</p>
+
+                <p>The problem wasn't that we needed more features. The problem was that we had too many options, too many tasks, and too much flexibility. Every todo app promised to help us "capture everything," but what we really needed was a tool that helped us focus on doing one thing at a time.</p>
+
+                <div class="highlight-box">
+                    <p>"Less is more. By limiting what you can do, we help you focus on what you should do."</p>
+                </div>
+
+                <p>So we built Simplicity—a todo app with intentional constraints. Maximum 2 tasks. Automatic 6-hour deadlines. No endless backlog. No distant-future planning. Just focus on today, right now.</p>
+            </div>
+
+            <!-- Our Philosophy -->
+            <div class="about-section">
+                <h2>Our Philosophy</h2>
+
+                <h3>Constraints Enable Focus</h3>
+                <p>We believe that limitations aren't bugs—they're features. When you can only have 2 tasks at a time, you're forced to prioritize. When deadlines are automatic, you can't procrastinate. These constraints create clarity.</p>
+
+                <h3>Doing Over Planning</h3>
+                <p>Most productivity apps let you spend hours organizing your tasks without actually completing any of them. Simplicity pushes you to do things now instead of planning for someday.</p>
+
+                <h3>Built for How Brains Actually Work</h3>
+                <p>We designed Simplicity specifically for people with ADHD, focus challenges, and decision fatigue. Our constraints reduce cognitive load and prevent the overwhelm that comes with traditional todo lists.</p>
+
+                <h3>Privacy First</h3>
+                <p>Your tasks stay on your device. We don't collect your data, read your tasks, or sell your information. What you do with Simplicity is your business, not ours.</p>
+            </div>
+
+            <!-- What Makes Us Different -->
+            <div class="about-section">
+                <h2>What Makes Us Different</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">Maximum Tasks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">Hour Deadlines</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Data Collection</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Local Storage</div>
+                    </div>
+                </div>
+
+                <p>Unlike other productivity apps, we:</p>
+                <ul>
+                    <li><strong>Limit choices</strong> - 2 tasks maximum prevents overwhelm and analysis paralysis</li>
+                    <li><strong>Create urgency</strong> - Automatic 6-hour deadlines prevent procrastination</li>
+                    <li><strong>Auto-expire tasks</strong> - Tasks that don't get done move to Archive automatically</li>
+                    <li><strong>Track patterns</strong> - See your completion rate to understand what's realistic</li>
+                    <li><strong>Respect privacy</strong> - Everything stays on your device, period</li>
+                    <li><strong>Zero learning curve</strong> - Open and start using immediately, no tutorials needed</li>
+                </ul>
+            </div>
+
+            <!-- The Team -->
+            <div class="about-section team-section">
+                <h2>The Team</h2>
+                <p>Simplicity is built by a small team of developers and designers who believe that productivity tools should reduce stress, not create it. We're people who have struggled with ADHD, procrastination, and the anxiety of endless todo lists—and we built the tool we wished existed.</p>
+            </div>
+
+            <!-- Roadmap -->
+            <div class="about-section">
+                <h2>What's Next</h2>
+                <p>We're constantly working to improve Simplicity while staying true to our minimalist philosophy. Here's what's coming:</p>
+                <ul>
+                    <li><strong>Cross-device sync</strong> - Optional cloud sync while maintaining privacy</li>
+                    <li><strong>Enhanced analytics</strong> - Deeper insights into your productivity patterns</li>
+                    <li><strong>Data export</strong> - Export your task history for your records</li>
+                    <li><strong>Customizable time windows</strong> - Adjust the 6-hour window to fit your schedule</li>
+                    <li><strong>Widgets</strong> - Quick access to your tasks from your home screen</li>
+                </ul>
+                <p>But we'll never add features that compromise our core philosophy: simplicity, focus, and constraint-based productivity.</p>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <h2>Ready to Focus on What Matters?</h2>
+                <p>Join thousands of people who have ditched their endless todo lists and started actually getting things done.</p>
+                <a href="index.html#download" class="btn">Download Simplicity</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Simplicity</h4>
+                    <p>Focus on what matters.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <a href="index.html">Home</a>
+                    <a href="why.html">Why?</a>
+                    <a href="support.html">Support</a>
+                    <a href="about.html">About</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="copyright.html">Copyright</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <a href="mailto:hello@simplicity-app.com">hello@simplicity-app.com</a>
+                    <a href="mailto:support@simplicity-app.com">Support</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Simplicity. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

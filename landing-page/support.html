@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Simplicity</title>
+    <meta name="description" content="Get help and support for Simplicity - the minimalist todo app that keeps you focused.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/simple-tech-orange.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/simple-tech-orange.png">
+
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .support-hero {
+            background: linear-gradient(135deg, #fff5f2 0%, #ffffff 100%);
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+
+        .support-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .support-hero p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .support-content {
+            padding: 60px 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .support-section {
+            background: var(--white);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .support-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+        }
+
+        .support-section h3 {
+            color: var(--text-dark);
+            margin: 2rem 0 1rem;
+            font-size: 1.25rem;
+        }
+
+        .support-section p {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .support-section ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .support-section li {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-box {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .contact-box h3 {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .contact-box a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        .faq-item {
+            margin-bottom: 2rem;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-answer {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="simple-tech-orange.png" alt="Simplicity Logo" class="logo-icon">
+                <span>Simplicity</span>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="why.html">Why?</a>
+                <a href="support.html">Support</a>
+                <a href="about.html">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="support-hero">
+        <div class="container">
+            <h1>Support</h1>
+            <p>We're here to help you get the most out of Simplicity</p>
+        </div>
+    </section>
+
+    <!-- Support Content -->
+    <section class="support-content">
+        <div class="container">
+
+            <!-- Getting Started -->
+            <div class="support-section">
+                <h2>Getting Started</h2>
+
+                <h3>How do I create a task?</h3>
+                <p>Tap the "+ New task" button on the Today screen. Enter your task title, add an optional description, and tap "Create Task". Your task will automatically get a 6-hour deadline (or 16 hours if created between 9pm-4am).</p>
+
+                <h3>Why can I only add 2 tasks?</h3>
+                <p>Simplicity limits you to 2 tasks at a time to help you focus on what truly matters. This constraint forces you to prioritize and prevents the overwhelm that comes with endless todo lists. To add a new task, you must complete or let expire one of your existing tasks.</p>
+
+                <h3>What happens when a task expires?</h3>
+                <p>Tasks automatically expire 30 minutes after their deadline. Expired tasks move to your Archive under "Unfinished" where you can review them later or re-enable them to create a new instance with a fresh deadline.</p>
+            </div>
+
+            <!-- Frequently Asked Questions -->
+            <div class="support-section">
+                <h2>Frequently Asked Questions</h2>
+
+                <div class="faq-item">
+                    <div class="faq-question">Can I change the deadline on a task?</div>
+                    <div class="faq-answer">No. Deadlines are automatically set and cannot be changed. This is intentional—it prevents procrastination and the "I'll do it later" mindset. If a task needs more time, let it expire and re-enable it from the Archive.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How do notifications work?</div>
+                    <div class="faq-answer">You'll receive notifications when tasks are approaching their deadline and when they enter the 30-minute buffer period before expiring. Make sure you've granted notification permissions in your device settings.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What do the analytics show?</div>
+                    <div class="faq-answer">The Summary tab shows your completion rate by day, week, or month. You can see how many tasks you've finished versus left unfinished, helping you understand your productivity patterns and set realistic goals.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Can I sync my tasks across devices?</div>
+                    <div class="faq-answer">Currently, Simplicity stores all data locally on your device. Cross-device sync is planned for a future update.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How do I re-enable an unfinished task?</div>
+                    <div class="faq-answer">Go to the Archive tab, find your task under "Unfinished", and tap the refresh icon. This creates a new instance of the task with a fresh deadline. The app tracks how many times you've reactivated a task.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What's the difference between the 6-hour and 16-hour deadline?</div>
+                    <div class="faq-answer">Tasks created during the day (4am-9pm) get a 6-hour deadline for immediate focus. Tasks created at night (9pm-4am) get a 16-hour deadline, allowing you to plan for the next day.</div>
+                </div>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="support-section">
+                <h2>Troubleshooting</h2>
+
+                <h3>I'm not receiving notifications</h3>
+                <p>Check the following:</p>
+                <ul>
+                    <li>Ensure you've granted notification permissions to Simplicity in your device settings</li>
+                    <li>Check that Do Not Disturb mode is not enabled</li>
+                    <li>Verify that notifications are enabled for the app in iOS/Android settings</li>
+                    <li>Try restarting the app</li>
+                </ul>
+
+                <h3>My tasks aren't expiring automatically</h3>
+                <p>The app checks for expired tasks when you open it and periodically in the background. Make sure:</p>
+                <ul>
+                    <li>Background app refresh is enabled for Simplicity</li>
+                    <li>The app hasn't been force-closed</li>
+                    <li>Your device has a stable internet connection</li>
+                </ul>
+
+                <h3>The app is crashing or freezing</h3>
+                <p>Try these steps:</p>
+                <ul>
+                    <li>Close and reopen the app</li>
+                    <li>Restart your device</li>
+                    <li>Ensure you have the latest version of the app</li>
+                    <li>If the problem persists, contact support</li>
+                </ul>
+            </div>
+
+            <!-- Privacy & Data -->
+            <div class="support-section">
+                <h2>Privacy & Data</h2>
+
+                <h3>Where is my data stored?</h3>
+                <p>All your task data is stored locally on your device using SQLite. We do not collect, store, or transmit your task information to any external servers.</p>
+
+                <h3>Can I export my data?</h3>
+                <p>Data export functionality is planned for a future update. Currently, all data remains on your device.</p>
+
+                <h3>What data does Simplicity collect?</h3>
+                <p>Simplicity collects minimal anonymous usage data to help improve the app (such as app crashes or performance metrics). We never collect the content of your tasks or personal information.</p>
+            </div>
+
+            <!-- Contact Support -->
+            <div class="contact-box">
+                <h3>Still need help?</h3>
+                <p>Contact us at <a href="mailto:support@simplicity-app.com">support@simplicity-app.com</a></p>
+                <p style="margin-top: 1rem; color: var(--text-light); font-size: 0.9rem;">We typically respond within 24-48 hours</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Simplicity</h4>
+                    <p>Focus on what matters.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <a href="index.html">Home</a>
+                    <a href="why.html">Why?</a>
+                    <a href="support.html">Support</a>
+                    <a href="about.html">About</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="copyright.html">Copyright</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <a href="mailto:hello@simplicity-app.com">hello@simplicity-app.com</a>
+                    <a href="mailto:support@simplicity-app.com">Support</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Simplicity. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
