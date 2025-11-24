@@ -214,4 +214,4 @@ Customize this section based on your licensing needs.
 
 ## Support
 
-For questions or issues, contact: hello@simplicity-app.com
+For questions or issues, contact: hello@simple-tech.com
