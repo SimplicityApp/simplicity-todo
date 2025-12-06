@@ -4,6 +4,7 @@ import { calculateDeadline, hasExpired } from '../utils/timeUtils';
 import type { Task, TaskInsert, TaskStats } from '../types';
 import { TIMINGS } from '../constants/theme';
 import { scheduleTaskDeadlineNotification, scheduleTaskReminderNotification, cancelTaskNotifications } from '../services/notificationService';
+import { useSettingsStore } from './settingsStore';
 
 interface TaskStore {
   // State
@@ -48,18 +49,20 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     set({ archivedTasks: archived });
   },
 
-  // Check if user can create a new task (max 2 active tasks)
+  // Check if user can create a new task (max tasks from settings)
   canCreateTask: () => {
     const { activeTasks } = get();
-    return activeTasks.length < TIMINGS.MAX_TASKS;
+    const maxTasks = useSettingsStore.getState().settings.max_tasks || TIMINGS.MAX_TASKS;
+    return activeTasks.length < maxTasks;
   },
 
   // Create a new task
   createTask: async (task: TaskInsert, customDeadline?: Date) => {
     const { canCreateTask, loadActiveTasks } = get();
+    const maxTasks = useSettingsStore.getState().settings.max_tasks || TIMINGS.MAX_TASKS;
 
     if (!canCreateTask()) {
-      throw new Error(`Maximum ${TIMINGS.MAX_TASKS} active tasks allowed`);
+      throw new Error(`Maximum ${maxTasks} active tasks allowed`);
     }
 
     try {
@@ -172,9 +175,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   // Re-enable an unfinished task
   reEnableTask: async (taskId: number) => {
     const { canCreateTask, loadActiveTasks, loadArchivedTasks } = get();
+    const maxTasks = useSettingsStore.getState().settings.max_tasks || TIMINGS.MAX_TASKS;
 
     if (!canCreateTask()) {
-      throw new Error(`Maximum ${TIMINGS.MAX_TASKS} active tasks allowed`);
+      throw new Error(`Maximum ${maxTasks} active tasks allowed`);
     }
 
     try {

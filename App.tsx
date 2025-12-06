@@ -9,19 +9,20 @@ import { CreateTaskScreen } from './src/screens/CreateTaskScreen';
 import { EditTaskScreen } from './src/screens/EditTaskScreen';
 import { ArchiveScreen } from './src/screens/ArchiveScreen';
 import { SummaryScreen } from './src/screens/SummaryScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
 import { TabBar, TabType } from './src/components/TabBar';
 import { ConfirmDialog } from './src/components/ConfirmDialog';
 import { COLORS } from './src/constants/theme';
 import { requestNotificationPermissions } from './src/services/notificationService';
 import { setupAutoExpiration } from './src/services/expirationService';
 import { useTaskStore } from './src/stores/taskStore';
+import { useSettingsStore } from './src/stores/settingsStore';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('today');
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
-  const { deleteTask } = useTaskStore();
 
   useEffect(() => {
     // Initialize database on app start
@@ -31,6 +32,11 @@ export default function App() {
     } catch (error) {
       console.error('Failed to initialize database:', error);
     }
+
+    // Load settings and time periods from database
+    const { loadSettings, loadTimePeriods } = useSettingsStore.getState();
+    loadSettings();
+    loadTimePeriods();
 
     // Request notification permissions
     requestNotificationPermissions();
@@ -60,6 +66,7 @@ export default function App() {
 
   const handleDeleteFromEdit = async (taskId: number) => {
     try {
+      const { deleteTask } = useTaskStore.getState();
       await deleteTask(taskId);
       // Don't close modal here - let EditTaskScreen handle it via onClose()
     } catch (error) {
@@ -71,6 +78,7 @@ export default function App() {
   const handleConfirmDelete = async () => {
     if (deletingTaskId !== null) {
       try {
+        const { deleteTask } = useTaskStore.getState();
         await deleteTask(deletingTaskId);
         setDeletingTaskId(null);
       } catch (error) {
@@ -93,6 +101,8 @@ export default function App() {
         return <ArchiveScreen />;
       case 'summary':
         return <SummaryScreen />;
+      case 'settings':
+        return <SettingsScreen />;
     }
   };
 

@@ -1,35 +1,105 @@
 import { TIMINGS } from '../constants/theme';
 import type { TimeWindow } from '../types';
+import { useSettingsStore } from '../stores/settingsStore';
+
+/**
+ * Get settings with fallback to defaults
+ */
+const getSettings = () => {
+  try {
+    return useSettingsStore.getState().settings;
+  } catch {
+    // Fallback to TIMINGS if settings not yet loaded
+    return {
+      buffer_minutes: TIMINGS.BUFFER_MINUTES,
+      max_tasks: TIMINGS.MAX_TASKS,
+    };
+  }
+};
+
+/**
+ * Get time periods with fallback to default
+ */
+const getTimePeriods = () => {
+  try {
+    const periods = useSettingsStore.getState().timePeriods;
+    if (periods && periods.length > 0) {
+      return periods;
+    }
+  } catch {
+    // Fallback to default period if not loaded
+  }
+
+  // Default period: 5am - 9pm, 6 hours max duration
+  return [{
+    id: 0,
+    start_hour: 5,
+    start_minute: 0,
+    end_hour: 21,
+    end_minute: 0,
+    max_duration_hours: 6,
+    created_at: new Date().toISOString(),
+  }];
+};
+
+/**
+ * Check if current time is within a time period
+ */
+const isTimeInPeriod = (
+  currentHour: number,
+  currentMinute: number,
+  startHour: number,
+  startMinute: number,
+  endHour: number,
+  endMinute: number
+): boolean => {
+  const toMinutes = (h: number, m: number) => h * 60 + m;
+  const current = toMinutes(currentHour, currentMinute);
+  const start = toMinutes(startHour, startMinute);
+  let end = toMinutes(endHour, endMinute);
+
+  // Handle periods that cross midnight
+  if (end <= start) {
+    end += 24 * 60;
+    if (current < start) {
+      return toMinutes(currentHour + 24, currentMinute) < end;
+    }
+  }
+
+  return current >= start && current < end;
+};
 
 /**
  * Check if current time allows task creation and determine max hours
- * Day mode (5am-8:59pm): Can create tasks for next 6 hours
- * Night mode (9pm-4:59am): Can create tasks for next 12 hours (next-day planning)
+ * Returns the matching time period's max duration
  */
 export const getTaskCreationWindow = (): TimeWindow => {
   const now = new Date();
   const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+  const periods = getTimePeriods();
 
-  // Night mode: 9pm (21:00) to 4:59am (4:59)
-  if (currentHour >= TIMINGS.NIGHT_MODE_START_HOUR || currentHour < TIMINGS.NIGHT_MODE_END_HOUR) {
-    return {
-      canCreate: true,
-      maxHours: TIMINGS.NIGHT_MODE_DURATION_HOURS,
-    };
-  }
-
-  // Day mode: 5am to 8:59pm
-  if (currentHour >= TIMINGS.NIGHT_MODE_END_HOUR && currentHour < TIMINGS.NIGHT_MODE_START_HOUR) {
-    return {
-      canCreate: true,
-      maxHours: TIMINGS.TASK_DURATION_HOURS,
-    };
+  // Find the period that contains the current time
+  for (const period of periods) {
+    if (isTimeInPeriod(
+      currentHour,
+      currentMinute,
+      period.start_hour,
+      period.start_minute,
+      period.end_hour,
+      period.end_minute
+    )) {
+      return {
+        canCreate: true,
+        maxHours: period.max_duration_hours,
+      };
+    }
   }
 
   return {
     canCreate: false,
     maxHours: 0,
-    reason: 'Outside allowed time window',
+    reason: 'Outside any configured time period',
   };
 };
 
@@ -131,9 +201,10 @@ export const formatDeadlineDisplay = (deadline: Date): string => {
  * Check if a task is in buffer period (after deadline, before final expiration)
  */
 export const isInBufferPeriod = (deadline: string): boolean => {
+  const settings = getSettings();
   const deadlineTime = new Date(deadline).getTime();
   const now = Date.now();
-  const bufferEnd = deadlineTime + TIMINGS.BUFFER_MINUTES * 60 * 1000;
+  const bufferEnd = deadlineTime + settings.buffer_minutes * 60 * 1000;
 
   return now > deadlineTime && now <= bufferEnd;
 };
@@ -142,9 +213,10 @@ export const isInBufferPeriod = (deadline: string): boolean => {
  * Check if a task has completely expired (past deadline + buffer)
  */
 export const hasExpired = (deadline: string): boolean => {
+  const settings = getSettings();
   const deadlineTime = new Date(deadline).getTime();
   const now = Date.now();
-  const bufferEnd = deadlineTime + TIMINGS.BUFFER_MINUTES * 60 * 1000;
+  const bufferEnd = deadlineTime + settings.buffer_minutes * 60 * 1000;
 
   return now > bufferEnd;
 };
@@ -153,13 +225,14 @@ export const hasExpired = (deadline: string): boolean => {
  * Get remaining time for a task in human-readable format
  */
 export const getRemainingTime = (deadline: string): { text: string; isUrgent: boolean; isBuffer: boolean } => {
+  const settings = getSettings();
   const deadlineTime = new Date(deadline).getTime();
   const now = Date.now();
   const diff = deadlineTime - now;
 
   // Check if in buffer period
   if (diff < 0) {
-    const bufferEnd = deadlineTime + TIMINGS.BUFFER_MINUTES * 60 * 1000;
+    const bufferEnd = deadlineTime + settings.buffer_minutes * 60 * 1000;
     const bufferRemaining = bufferEnd - now;
 
     if (bufferRemaining > 0) {
@@ -181,8 +254,8 @@ export const getRemainingTime = (deadline: string): { text: string; isUrgent: bo
   const hours = Math.floor(diff / 3600000);
   const minutes = Math.floor((diff % 3600000) / 60000);
 
-  // Urgent if less than 30 minutes remaining
-  const isUrgent = diff < TIMINGS.BUFFER_MINUTES * 60 * 1000;
+  // Urgent if less than buffer time remaining
+  const isUrgent = diff < settings.buffer_minutes * 60 * 1000;
 
   if (hours > 0) {
     return {

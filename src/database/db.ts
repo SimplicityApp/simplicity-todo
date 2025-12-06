@@ -46,6 +46,48 @@ export const initDatabase = () => {
     CREATE INDEX IF NOT EXISTS idx_deadline ON tasks(deadline);
   `);
 
+  // Create settings table
+  database.execSync(`
+    CREATE TABLE IF NOT EXISTS settings (
+      id INTEGER PRIMARY KEY CHECK(id = 1),
+      max_tasks INTEGER NOT NULL DEFAULT 2,
+      buffer_minutes INTEGER NOT NULL DEFAULT 30
+    );
+  `);
+
+  // Create time periods table
+  database.execSync(`
+    CREATE TABLE IF NOT EXISTS time_periods (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      start_hour INTEGER NOT NULL,
+      start_minute INTEGER NOT NULL DEFAULT 0,
+      end_hour INTEGER NOT NULL,
+      end_minute INTEGER NOT NULL DEFAULT 0,
+      max_duration_hours INTEGER NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE(start_hour, start_minute, end_hour, end_minute)
+    );
+  `);
+
+  // Insert default settings if they don't exist
+  const existingSettings = database.getFirstSync('SELECT * FROM settings WHERE id = 1');
+  if (!existingSettings) {
+    database.runSync(`
+      INSERT INTO settings (id, max_tasks, buffer_minutes)
+      VALUES (1, 2, 30)
+    `);
+  }
+
+  // Insert default time period if none exist
+  const existingPeriods = database.getFirstSync('SELECT COUNT(*) as count FROM time_periods');
+  if (existingPeriods && (existingPeriods as any).count === 0) {
+    const now = new Date().toISOString();
+    database.runSync(`
+      INSERT INTO time_periods (start_hour, start_minute, end_hour, end_minute, max_duration_hours, created_at)
+      VALUES (5, 0, 21, 0, 6, ?)
+    `, [now]);
+  }
+
   // Migration: Add notification ID columns if they don't exist
   try {
     // Check if columns exist by trying to select them
@@ -235,4 +277,147 @@ export const dbOperations = {
     const database = getDatabase();
     database.runSync('DELETE FROM tasks');
   },
+
+  // Get settings
+  getSettings: () => {
+    const database = getDatabase();
+    const settings = database.getFirstSync('SELECT * FROM settings WHERE id = 1');
+    return settings as {
+      id: number;
+      max_tasks: number;
+      buffer_minutes: number;
+    };
+  },
+
+  // Update settings
+  updateSettings: (updates: {
+    max_tasks?: number;
+    buffer_minutes?: number;
+  }): void => {
+    const database = getDatabase();
+    const current = database.getFirstSync('SELECT * FROM settings WHERE id = 1') as any;
+
+    const max_tasks = updates.max_tasks !== undefined ? updates.max_tasks : current.max_tasks;
+    const buffer_minutes = updates.buffer_minutes !== undefined ? updates.buffer_minutes : current.buffer_minutes;
+
+    database.runSync(
+      `UPDATE settings SET max_tasks = ?, buffer_minutes = ? WHERE id = 1`,
+      [max_tasks, buffer_minutes]
+    );
+  },
+
+  // Get all time periods
+  getTimePeriods: () => {
+    const database = getDatabase();
+    const periods = database.getAllSync('SELECT * FROM time_periods ORDER BY start_hour ASC, start_minute ASC');
+    return periods as Array<{
+      id: number;
+      start_hour: number;
+      start_minute: number;
+      end_hour: number;
+      end_minute: number;
+      max_duration_hours: number;
+      created_at: string;
+    }>;
+  },
+
+  // Add a time period with overlap validation
+  addTimePeriod: (
+    start_hour: number,
+    start_minute: number,
+    end_hour: number,
+    end_minute: number,
+    max_duration_hours: number
+  ): { success: boolean; error?: string; id?: number } => {
+    const database = getDatabase();
+    const periods = database.getAllSync('SELECT * FROM time_periods') as any[];
+
+    // Check for overlaps
+    for (const period of periods) {
+      if (timePeriodsOverlap(
+        { start_hour, start_minute, end_hour, end_minute },
+        { start_hour: period.start_hour, start_minute: period.start_minute, end_hour: period.end_hour, end_minute: period.end_minute }
+      )) {
+        return {
+          success: false,
+          error: `Overlaps with existing period ${formatTime(period.start_hour, period.start_minute)} - ${formatTime(period.end_hour, period.end_minute)}`
+        };
+      }
+    }
+
+    const now = new Date().toISOString();
+    const result = database.runSync(
+      `INSERT INTO time_periods (start_hour, start_minute, end_hour, end_minute, max_duration_hours, created_at)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [start_hour, start_minute, end_hour, end_minute, max_duration_hours, now]
+    );
+
+    return { success: true, id: result.lastInsertRowId as number };
+  },
+
+  // Delete a time period
+  deleteTimePeriod: (id: number): void => {
+    const database = getDatabase();
+    database.runSync('DELETE FROM time_periods WHERE id = ?', [id]);
+  },
+
+  // Update a time period
+  updateTimePeriod: (
+    id: number,
+    start_hour: number,
+    start_minute: number,
+    end_hour: number,
+    end_minute: number,
+    max_duration_hours: number
+  ): { success: boolean; error?: string } => {
+    const database = getDatabase();
+    const periods = database.getAllSync('SELECT * FROM time_periods WHERE id != ?', [id]) as any[];
+
+    // Check for overlaps with other periods
+    for (const period of periods) {
+      if (timePeriodsOverlap(
+        { start_hour, start_minute, end_hour, end_minute },
+        { start_hour: period.start_hour, start_minute: period.start_minute, end_hour: period.end_hour, end_minute: period.end_minute }
+      )) {
+        return {
+          success: false,
+          error: `Overlaps with existing period ${formatTime(period.start_hour, period.start_minute)} - ${formatTime(period.end_hour, period.end_minute)}`
+        };
+      }
+    }
+
+    database.runSync(
+      `UPDATE time_periods SET start_hour = ?, start_minute = ?, end_hour = ?, end_minute = ?, max_duration_hours = ? WHERE id = ?`,
+      [start_hour, start_minute, end_hour, end_minute, max_duration_hours, id]
+    );
+
+    return { success: true };
+  },
 };
+
+// Helper functions for time period validation
+function timePeriodsOverlap(
+  period1: { start_hour: number; start_minute: number; end_hour: number; end_minute: number },
+  period2: { start_hour: number; start_minute: number; end_hour: number; end_minute: number }
+): boolean {
+  const toMinutes = (hour: number, minute: number) => hour * 60 + minute;
+
+  const p1Start = toMinutes(period1.start_hour, period1.start_minute);
+  let p1End = toMinutes(period1.end_hour, period1.end_minute);
+
+  const p2Start = toMinutes(period2.start_hour, period2.start_minute);
+  let p2End = toMinutes(period2.end_hour, period2.end_minute);
+
+  // Handle periods that cross midnight
+  if (p1End <= p1Start) p1End += 24 * 60;
+  if (p2End <= p2Start) p2End += 24 * 60;
+
+  // Check if periods overlap
+  return (p1Start < p2End) && (p2Start < p1End);
+}
+
+function formatTime(hour: number, minute: number): string {
+  const period = hour >= 12 ? 'pm' : 'am';
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  return `${displayHour}:${minute.toString().padStart(2, '0')}${period}`;
+}

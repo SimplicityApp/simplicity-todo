@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { COLORS, TYPOGRAPHY, SPACING } from '../constants/theme';
 import {
   getMaxDeadline,
@@ -18,149 +19,108 @@ export const DeadlinePicker: React.FC<DeadlinePickerProps> = ({
   onDeadlineChange,
   initialDeadline,
 }) => {
-  const [selectedHours, setSelectedHours] = useState(0);
-  const [selectedMinutes, setSelectedMinutes] = useState(0);
-  const [maxHours, setMaxHours] = useState(6);
+  const [selectedDeadline, setSelectedDeadline] = useState<Date>(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [minDeadline, setMinDeadline] = useState<Date>(new Date());
+  const [maxDeadline, setMaxDeadline] = useState<Date>(new Date());
 
   useEffect(() => {
-    const window = getTaskCreationWindow();
-    setMaxHours(window.maxHours);
+    // Set up min and max deadlines
+    const min = getMinDeadline();
+    const max = getMaxDeadline();
+    setMinDeadline(min);
+    setMaxDeadline(max);
 
-    // Only initialize once on mount
+    // Initialize selected deadline
     if (initialDeadline) {
-      const now = new Date();
-      const diff = initialDeadline.getTime() - now.getTime();
-      const hours = Math.floor(diff / 3600000);
-      const minutes = Math.floor((diff % 3600000) / 60000);
-      setSelectedHours(Math.max(0, Math.min(hours, window.maxHours)));
-      setSelectedMinutes(Math.max(0, Math.min(minutes, 59)));
+      setSelectedDeadline(new Date(initialDeadline));
     } else {
       // Default to 3 hours from now
-      setSelectedHours(3);
-      setSelectedMinutes(0);
+      const defaultDeadline = new Date();
+      defaultDeadline.setHours(defaultDeadline.getHours() + 3);
+      setSelectedDeadline(defaultDeadline);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run once on mount
 
   useEffect(() => {
-    const now = new Date();
-    const deadline = new Date(now);
-    deadline.setHours(deadline.getHours() + selectedHours);
-    deadline.setMinutes(deadline.getMinutes() + selectedMinutes);
-
-    const validation = validateCustomDeadline(deadline);
+    const validation = validateCustomDeadline(selectedDeadline);
     if (!validation.valid) {
       setError(validation.error || null);
     } else {
       setError(null);
-      onDeadlineChange(deadline);
+      onDeadlineChange(selectedDeadline);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedHours, selectedMinutes]); // onDeadlineChange is stable (setState)
+  }, [selectedDeadline]); // onDeadlineChange is stable (setState)
 
-  const getCurrentDeadline = (): Date => {
-    const now = new Date();
-    const deadline = new Date(now);
-    deadline.setHours(deadline.getHours() + selectedHours);
-    deadline.setMinutes(deadline.getMinutes() + selectedMinutes);
-    return deadline;
-  };
+  const handleDateChange = (event: any, date?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowPicker(false);
+    }
 
-  const adjustValue = (
-    current: number,
-    delta: number,
-    min: number,
-    max: number,
-    setter: (value: number) => void
-  ) => {
-    const newValue = Math.max(min, Math.min(max, current + delta));
-    setter(newValue);
-  };
+    if (date) {
+      // Ensure the selected date is within bounds
+      const min = getMinDeadline();
+      const max = getMaxDeadline();
 
-  const handleHoursChange = (text: string) => {
-    const value = parseInt(text, 10);
-    if (!isNaN(value) && value >= 0 && value <= maxHours) {
-      setSelectedHours(value);
-    } else if (text === '') {
-      setSelectedHours(0);
+      if (date < min) {
+        setSelectedDeadline(min);
+      } else if (date > max) {
+        setSelectedDeadline(max);
+      } else {
+        setSelectedDeadline(date);
+      }
     }
   };
 
-  const handleMinutesChange = (text: string) => {
-    const value = parseInt(text, 10);
-    if (!isNaN(value) && value >= 0 && value <= 59) {
-      setSelectedMinutes(value);
-    } else if (text === '') {
-      setSelectedMinutes(0);
-    }
+  const handlePress = () => {
+    setShowPicker(true);
+  };
+
+  const handleDismiss = () => {
+    setShowPicker(false);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Set Deadline</Text>
 
-      <View style={styles.pickerRow}>
-        <View style={styles.pickerContainer}>
-          <Text style={styles.pickerLabel}>Hours</Text>
-          <View style={styles.inputGroup}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => adjustValue(selectedHours, -1, 0, maxHours, setSelectedHours)}
-            >
-              <Text style={styles.buttonText}>-</Text>
-            </TouchableOpacity>
-            <TextInput
-              style={styles.input}
-              value={selectedHours.toString()}
-              onChangeText={handleHoursChange}
-              keyboardType="number-pad"
-              maxLength={2}
-            />
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => adjustValue(selectedHours, 1, 0, maxHours, setSelectedHours)}
-            >
-              <Text style={styles.buttonText}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+      <TouchableOpacity
+        style={styles.timePickerButton}
+        onPress={handlePress}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.timePickerButtonText}>
+          {formatDeadlineDisplay(selectedDeadline)}
+        </Text>
+        <Text style={styles.tapHint}>Tap to change</Text>
+      </TouchableOpacity>
 
-        <View style={styles.pickerContainer}>
-          <Text style={styles.pickerLabel}>Minutes</Text>
-          <View style={styles.inputGroup}>
+      {showPicker && (
+        <>
+          <DateTimePicker
+            value={selectedDeadline}
+            mode="datetime"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={handleDateChange}
+            minimumDate={minDeadline}
+            maximumDate={maxDeadline}
+            minuteInterval={5}
+          />
+          {Platform.OS === 'ios' && (
             <TouchableOpacity
-              style={styles.button}
-              onPress={() => adjustValue(selectedMinutes, -5, 0, 59, setSelectedMinutes)}
+              style={styles.doneButton}
+              onPress={handleDismiss}
             >
-              <Text style={styles.buttonText}>-</Text>
+              <Text style={styles.doneButtonText}>Done</Text>
             </TouchableOpacity>
-            <TextInput
-              style={styles.input}
-              value={selectedMinutes.toString()}
-              onChangeText={handleMinutesChange}
-              keyboardType="number-pad"
-              maxLength={2}
-            />
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => adjustValue(selectedMinutes, 5, 0, 59, setSelectedMinutes)}
-            >
-              <Text style={styles.buttonText}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-
-      {error ? (
-        <Text style={styles.error}>{error}</Text>
-      ) : (
-        <View style={styles.displayContainer}>
-          <Text style={styles.displayValue}>
-            {formatDeadlineDisplay(getCurrentDeadline())}
-          </Text>
-        </View>
+          )}
+        </>
       )}
+
+      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 };
@@ -175,65 +135,37 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     marginBottom: SPACING.sm,
   },
-  pickerRow: {
-    flexDirection: 'row',
-    gap: SPACING.sm,
+  timePickerButton: {
+    backgroundColor: COLORS.white,
+    padding: SPACING.md,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.divider,
+    alignItems: 'center',
     marginBottom: SPACING.sm,
   },
-  pickerContainer: {
-    flex: 1,
+  timePickerButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.accent,
+    marginBottom: SPACING.xs,
   },
-  pickerLabel: {
+  tapHint: {
     fontSize: 13,
     fontWeight: '400',
     color: COLORS.textSecondary,
-    marginBottom: SPACING.xs,
-    textAlign: 'center',
   },
-  inputGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.xs,
-  },
-  button: {
-    width: 32,
-    height: 32,
-    backgroundColor: COLORS.white,
-    borderWidth: 1,
-    borderColor: COLORS.divider,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: COLORS.accent,
-  },
-  input: {
-    flex: 1,
-    height: 32,
-    backgroundColor: COLORS.white,
-    borderWidth: 1,
-    borderColor: COLORS.divider,
-    borderRadius: 6,
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '500',
-    color: COLORS.text,
-  },
-  displayContainer: {
-    backgroundColor: COLORS.white,
+  doneButton: {
+    backgroundColor: COLORS.accent,
     padding: SPACING.sm,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: COLORS.divider,
+    borderRadius: 8,
     alignItems: 'center',
+    marginTop: SPACING.sm,
   },
-  displayValue: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: COLORS.accent,
+  doneButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.white,
   },
   error: {
     fontSize: TYPOGRAPHY.description.fontSize,

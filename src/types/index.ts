@@ -31,3 +31,19 @@ export interface TimeWindow {
   maxHours: number;
   reason?: string;
 }
+
+export interface Settings {
+  id: number;
+  max_tasks: number;
+  buffer_minutes: number;
+}
+
+export interface TimePeriod {
+  id: number;
+  start_hour: number;
+  start_minute: number;
+  end_hour: number;
+  end_minute: number;
+  max_duration_hours: number;
+  created_at: string;
+}

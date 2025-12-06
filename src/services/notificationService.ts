@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { TIMINGS } from '../constants/theme';
+import { useSettingsStore } from '../stores/settingsStore';
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
@@ -51,8 +52,11 @@ export const scheduleTaskDeadlineNotification = async (
   deadline: string
 ): Promise<string | null> => {
   try {
+    const settings = useSettingsStore.getState().settings;
+    const bufferMinutes = settings?.buffer_minutes || TIMINGS.BUFFER_MINUTES;
+
     const deadlineTime = new Date(deadline).getTime();
-    const bufferEndTime = deadlineTime + TIMINGS.BUFFER_MINUTES * 60 * 1000;
+    const bufferEndTime = deadlineTime + bufferMinutes * 60 * 1000;
 
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
